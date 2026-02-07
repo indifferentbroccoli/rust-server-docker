@@ -35,10 +35,6 @@ Eat lag for breakfast
 
 Copy the .env.example file to a new file called .env file. Then use either `docker compose` or `docker run`
 
-> [!IMPORTANT]
-> Please make sure to change the following in the .env:
-> RCON_PASSWORD/ADMIN_USERNAME/ADMIN_PASSWORD
-
 ### Docker compose
 
 Starting the server with Docker Compose:

@@ -22,9 +22,9 @@ RUN wget -q https://github.com/gorcon/rcon-cli/archive/refs/tags/v${RCON_VERSION
 FROM cm2network/steamcmd:root
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gettext-base=0.21-12 \
-    procps=2:4.0.2-3 \
-    jq=1.6-2.1+deb12u1 \
+    gettext-base \
+    procps \
+    jq \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -52,8 +52,8 @@ COPY ./scripts /home/steam/server/
 
 COPY branding /branding
 
-RUN mkdir -p /steamcmd/rust /rust-config && \
-    chmod +x /home/steam/ser&& \
+RUN mkdir -p /steamcmd/rust && \
+    chmod +x /home/steam/server/*.sh && \
     chmod +x /home/steam/server/rcon && \
     ln -s /home/steam/server/rcon /usr/bin/rcon && \
     chown -R steam:steam /steamcmd/rust

@@ -83,9 +83,6 @@ if [ -n "$RUST_STARTUP_ARGUMENTS" ]; then
   STARTUP_ARGS="${STARTUP_ARGS} ${RUST_STARTUP_ARGUMENTS}"
 fi
 
-# Log file
-STARTUP_ARGS="${STARTUP_ARGS} -logfile /steamcmd/rust/server-console.txt"
-
 LogAction "Starting Rust server"
 LogInfo "Server: ${SERVER_NAME}"
 LogInfo "Port: ${SERVER_PORT}"
@@ -93,6 +90,14 @@ LogInfo "RCON Port: ${RCON_PORT}"
 LogInfo "App Port: ${APP_PORT}"
 LogInfo "Max Players: ${MAX_PLAYERS}"
 
-# Start the server
+# Start the server and tail the log file for docker logs
 cd /steamcmd/rust || exit
-exec ./RustDedicated ${STARTUP_ARGS}
+
+./RustDedicated ${STARTUP_ARGS} -logfile /steamcmd/rust/server-console.txt &
+
+# Wait for log file to be created
+while [ ! -f /steamcmd/rust/server-console.txt ]; do
+  sleep 1
+done
+
+exec tail -f /steamcmd/rust/server-console.txt
