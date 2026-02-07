@@ -60,7 +60,7 @@ install() {
 shutdown_server() {
   LogAction "Shutting down Rust server"
   
-  if [ -f /home/steam/server/rcon.yml ]; then
+  if [ -f /home/steam/server/rcon.yaml ]; then
     LogInfo "Sending save and quit command via RCON"
     rcon-cli "save"
     sleep 2

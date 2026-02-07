@@ -19,7 +19,7 @@ RUST_STARTUP_ARGUMENTS="${RUST_SERVER_STARTUP_ARGUMENTS:-${RUST_STARTUP_ARGUMENT
 
 # Configure RCON settings
 LogAction "Configuring RCON settings"
-cat >/home/steam/server/rcon.yml  <<EOL
+cat >/home/steam/server/rcon.yaml  <<EOL
 default:
   address: "127.0.0.1:${RCON_PORT}"
   password: "${RCON_PASSWORD}"
