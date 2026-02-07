@@ -15,10 +15,11 @@ chown -R steam:steam /steamcmd/rust /home/steam/
 
 cat /branding
 
-if [[ "${UPDATE_ON_START:-true}" == "true" || "${UPDATE_ON_START:-true}" == "1" ]]; then
+UPDATE_ON_START=$(get_var "UPDATE_ON_START" "true")
+if [[ "$UPDATE_ON_START" == "true" || "$UPDATE_ON_START" == "1" ]]; then
     install
 else
-    LogWarn "UPDATE_ON_START is set to false, skipping server update from Steam"
+    LogWarn "UPDATE_ON_START is set to false/0, skipping server update from Steam"
 fi
 
 # Install Oxide if enabled

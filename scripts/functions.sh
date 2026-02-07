@@ -1,6 +1,17 @@
 #!/bin/bash
 
 #================
+# Variable Helper
+#================
+# Handles both RUST_* prefixed and clean variable names for backward compatibility from Didstopia's image.
+get_var() {
+  local var_name="$1"
+  local default="$2"
+  local rust_var="RUST_${var_name}"
+  echo "${!rust_var:-${!var_name:-$default}}"
+}
+
+#================
 # Log Definitions
 #================
 export LINE='\n'                        # Line Break
@@ -96,7 +107,9 @@ check_admin_password() {
 }
 
 install_oxide() {
-  if [[ "$OXIDE_ENABLED" == "true" || "$OXIDE_ENABLED" == "1" ]]; then
+  local OXIDE_CHECK=$(get_var "OXIDE_ENABLED" "false")
+  
+  if [[ "$OXIDE_CHECK" == "true" || "$OXIDE_CHECK" == "1" ]]; then
     LogAction "Installing Oxide/uMod"
     
     cd /steamcmd/rust || exit
