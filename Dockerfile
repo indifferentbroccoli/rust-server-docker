@@ -45,8 +45,7 @@ ENV HOME=/home/steam \
     WORLD_SIZE=3500 \
     MAX_PLAYERS=50 \
     GENERATE_SETTINGS=true \
-    OXIDE_ENABLED=false \
-    UPDATE_CHECKING=true
+    OXIDE_ENABLED=false
 
 COPY ./scripts /home/steam/server/
 

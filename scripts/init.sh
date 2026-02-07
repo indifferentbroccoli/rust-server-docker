@@ -15,7 +15,7 @@ chown -R steam:steam /steamcmd/rust /home/steam/
 
 cat /branding
 
-if [ "${UPDATE_ON_START:-true}" = "true" ]; then
+if [[ "${UPDATE_ON_START:-true}" == "true" || "${UPDATE_ON_START:-true}" == "1" ]]; then
     install
 else
     LogWarn "UPDATE_ON_START is set to false, skipping server update from Steam"

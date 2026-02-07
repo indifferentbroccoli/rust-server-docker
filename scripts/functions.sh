@@ -96,7 +96,7 @@ check_admin_password() {
 }
 
 install_oxide() {
-  if [ "$OXIDE_ENABLED" = "true" ]; then
+  if [[ "$OXIDE_ENABLED" == "true" || "$OXIDE_ENABLED" == "1" ]]; then
     LogAction "Installing Oxide/uMod"
     
     cd /steamcmd/rust || exit
