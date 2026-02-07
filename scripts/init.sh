@@ -40,7 +40,7 @@ trap 'term_handler' SIGTERM
 check_admin_password
 
 # Start the server
-./start.sh &
+/home/steam/server/start.sh &
 
 # Process ID of su
 killpid="$!"

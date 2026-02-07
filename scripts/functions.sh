@@ -73,9 +73,9 @@ shutdown_server() {
   
   if [ -f /home/steam/server/rcon.yaml ]; then
     LogInfo "Sending save and quit command via RCON"
-    rcon-cli "save"
+    rcon-cli --config /home/steam/server/rcon.yaml "save"
     sleep 2
-    rcon-cli "quit"
+    rcon-cli --config /home/steam/server/rcon.yaml "quit"
     
     # Wait for graceful shutdown
     for i in {1..30}; do
@@ -114,13 +114,17 @@ install_oxide() {
     
     cd /steamcmd/rust || exit
     
-    # Download latest Oxide
-    if wget -q https://umod.org/games/rust/download -O oxide.zip; then
-      unzip -o oxide.zip
-      rm oxide.zip
+    # Download and extract latest Oxide using curl and bsdtar
+    OXIDE_URL="https://umod.org/games/rust/download/develop"
+    LogInfo "Downloading Oxide from: $OXIDE_URL"
+    if curl -sL "$OXIDE_URL" | bsdtar -xvf- -C /steamcmd/rust/ 2>&1 | head -20; then
+      chmod 755 /steamcmd/rust/CSharpCompiler.x86_x64 > /dev/null 2>&1 || true
       LogSuccess "Oxide installed successfully"
+      LogInfo "Oxide files extracted to /steamcmd/rust/"
+      ls -la /steamcmd/rust/ | grep -i "oxide\|csharp" || true
     else
-      LogError "Failed to download Oxide"
+      LogError "Failed to download or extract Oxide"
+      return 1
     fi
   fi
 }
