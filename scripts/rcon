@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# RCON wrapper script for compatibility with rust-scripts
+# This allows 'docker exec <container> rcon <command>' to work
+
+if [ -f /home/steam/server/rcon.yml ]; then
+    rcon-cli "$@"
+else
+    echo "RCON not configured"
+    exit 1
+fi

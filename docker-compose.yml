@@ -1,0 +1,19 @@
+---
+services:
+  rust:
+    image: indifferentbroccoli/rust-server-docker:latest
+    restart: unless-stopped
+    container_name: rustserver
+    stop_grace_period: 30s
+    ports:
+      - 28015:28015
+      - 28015:28015/udp
+      - 28016:28016
+      - 28016:28016/udp
+      - 28082:28082
+    environment:
+      GENERATE_SETTINGS: true
+    env_file:
+      - .env.example
+    volumes:
+      - ./server-files:/steamcmd/rust
