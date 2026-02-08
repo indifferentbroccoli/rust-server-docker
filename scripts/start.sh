@@ -16,6 +16,7 @@ OXIDE_ENABLED=$(get_var "OXIDE_ENABLED" "false")
 GENERATE_SETTINGS=$(get_var "GENERATE_SETTINGS" "true")
 SAVE_INTERVAL=$(get_var "SAVE_INTERVAL" "600")
 RUST_STARTUP_ARGUMENTS=$(get_var "SERVER_STARTUP_ARGUMENTS" "")
+SERVER_IDENTITY=$(get_var "SERVER_IDENTITY" "${SERVER_NAME}")
 
 # Configure RCON settings
 LogAction "Configuring RCON settings"
@@ -23,6 +24,7 @@ cat >/home/steam/server/rcon.yaml  <<EOL
 default:
   address: "127.0.0.1:${RCON_PORT}"
   password: "${RCON_PASSWORD}"
+  type: "web"
 EOL
 
 cd /steamcmd/rust || exit
@@ -39,12 +41,12 @@ if [ "$GENERATE_SETTINGS" = "true" ]; then
   STARTUP_ARGS="${STARTUP_ARGS} +server.queryport ${RCON_PORT}"
   STARTUP_ARGS="${STARTUP_ARGS} +rcon.port ${RCON_PORT}"
   STARTUP_ARGS="${STARTUP_ARGS} +rcon.password \"${RCON_PASSWORD}\""
-  STARTUP_ARGS="${STARTUP_ARGS} +rcon.web 0"
+  STARTUP_ARGS="${STARTUP_ARGS} +rcon.web 1"
   STARTUP_ARGS="${STARTUP_ARGS} +app.port ${APP_PORT}"
   STARTUP_ARGS="${STARTUP_ARGS} +server.maxplayers ${MAX_PLAYERS}"
   STARTUP_ARGS="${STARTUP_ARGS} +server.worldsize ${WORLD_SIZE}"
   STARTUP_ARGS="${STARTUP_ARGS} +server.seed ${SERVER_SEED}"
-  STARTUP_ARGS="${STARTUP_ARGS} +server.identity \"${SERVER_NAME}\""
+  STARTUP_ARGS="${STARTUP_ARGS} +server.identity \"${SERVER_IDENTITY}\""
   STARTUP_ARGS="${STARTUP_ARGS} +server.saveinterval ${SAVE_INTERVAL:-600}"
   
   # Update checking
