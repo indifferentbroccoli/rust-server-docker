@@ -3,7 +3,7 @@
 # This allows 'docker exec <container> rcon <command>' to work
 
 if [ -f /home/steam/server/rcon.yaml ]; then
-    rcon-cli --config /home/steam/server/rcon.yaml "$@"
+    rcon-cli -t web --config /home/steam/server/rcon.yaml "$@"
 else
     echo "RCON not configured"
     exit 1
