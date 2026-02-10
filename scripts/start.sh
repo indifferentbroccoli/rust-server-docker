@@ -29,49 +29,49 @@ EOL
 
 cd /steamcmd/rust || exit
 
-# Build startup arguments
-STARTUP_ARGS="-batchmode -load -nographics +server.secure 1"
+# Build startup arguments using array
+STARTUP_ARGS=(-batchmode -load -nographics +server.secure 1)
 
 if [ "$GENERATE_SETTINGS" = "true" ]; then
   LogAction "Configuring server settings"
   
-  STARTUP_ARGS="${STARTUP_ARGS} +server.hostname \"${SERVER_NAME}\""
-  STARTUP_ARGS="${STARTUP_ARGS} +server.description \"${SERVER_DESCRIPTION}\""
-  STARTUP_ARGS="${STARTUP_ARGS} +server.port ${SERVER_PORT}"
-  STARTUP_ARGS="${STARTUP_ARGS} +server.queryport ${RCON_PORT}"
-  STARTUP_ARGS="${STARTUP_ARGS} +rcon.port ${RCON_PORT}"
-  STARTUP_ARGS="${STARTUP_ARGS} +rcon.password \"${RCON_PASSWORD}\""
-  STARTUP_ARGS="${STARTUP_ARGS} +rcon.web 1"
-  STARTUP_ARGS="${STARTUP_ARGS} +app.port ${APP_PORT}"
-  STARTUP_ARGS="${STARTUP_ARGS} +server.maxplayers ${MAX_PLAYERS}"
-  STARTUP_ARGS="${STARTUP_ARGS} +server.worldsize ${WORLD_SIZE}"
-  STARTUP_ARGS="${STARTUP_ARGS} +server.seed ${SERVER_SEED}"
-  STARTUP_ARGS="${STARTUP_ARGS} +server.identity \"${SERVER_IDENTITY}\""
-  STARTUP_ARGS="${STARTUP_ARGS} +server.saveinterval ${SAVE_INTERVAL:-600}"
+  STARTUP_ARGS+=(+server.hostname "${SERVER_NAME}")
+  STARTUP_ARGS+=(+server.description "${SERVER_DESCRIPTION}")
+  STARTUP_ARGS+=(+server.port "${SERVER_PORT}")
+  STARTUP_ARGS+=(+server.queryport "${RCON_PORT}")
+  STARTUP_ARGS+=(+rcon.port "${RCON_PORT}")
+  STARTUP_ARGS+=(+rcon.password "${RCON_PASSWORD}")
+  STARTUP_ARGS+=(+rcon.web 1)
+  STARTUP_ARGS+=(+app.port "${APP_PORT}")
+  STARTUP_ARGS+=(+server.maxplayers "${MAX_PLAYERS}")
+  STARTUP_ARGS+=(+server.worldsize "${WORLD_SIZE}")
+  STARTUP_ARGS+=(+server.seed "${SERVER_SEED}")
+  STARTUP_ARGS+=(+server.identity "${SERVER_IDENTITY}")
+  STARTUP_ARGS+=(+server.saveinterval "${SAVE_INTERVAL:-600}")
   
   # Update checking
   if [ -n "$SERVER_HEADERIMAGE" ]; then
-    STARTUP_ARGS="${STARTUP_ARGS} +server.headerimage \"${SERVER_HEADERIMAGE}\""
+    STARTUP_ARGS+=(+server.headerimage "${SERVER_HEADERIMAGE}")
   fi
   
   if [ -n "$SERVER_URL" ]; then
-    STARTUP_ARGS="${STARTUP_ARGS} +server.url \"${SERVER_URL}\""
+    STARTUP_ARGS+=(+server.url "${SERVER_URL}")
   fi
   
   if [ "$PVP" = "false" ]; then
-    STARTUP_ARGS="${STARTUP_ARGS} +server.pve true"
+    STARTUP_ARGS+=(+server.pve true)
   fi
   
   if [ -n "$DECAY_SCALE" ]; then
-    STARTUP_ARGS="${STARTUP_ARGS} +decay.scale ${DECAY_SCALE}"
+    STARTUP_ARGS+=(+decay.scale "${DECAY_SCALE}")
   fi
   
   if [ "$STABILITY" = "false" ]; then
-    STARTUP_ARGS="${STARTUP_ARGS} +server.stability false"
+    STARTUP_ARGS+=(+server.stability false)
   fi
   
   if [ "$RADIATION" = "false" ]; then
-    STARTUP_ARGS="${STARTUP_ARGS} +server.radiation false"
+    STARTUP_ARGS+=(+server.radiation false)
   fi
   
 elif [ "$GENERATE_SETTINGS" = "false" ]; then
@@ -81,7 +81,7 @@ fi
 # Add custom startup arguments if provided
 if [ -n "$RUST_STARTUP_ARGUMENTS" ]; then
   LogInfo "Adding custom startup arguments"
-  STARTUP_ARGS="${STARTUP_ARGS} ${RUST_STARTUP_ARGUMENTS}"
+  STARTUP_ARGS+=(${RUST_STARTUP_ARGUMENTS})
 fi
 
 LogAction "Starting Rust server"
@@ -94,7 +94,7 @@ LogInfo "Max Players: ${MAX_PLAYERS}"
 # Start the server and tail the log file for docker logs
 cd /steamcmd/rust || exit
 
-./RustDedicated ${STARTUP_ARGS} -logfile /steamcmd/rust/server-console.txt &
+./RustDedicated "${STARTUP_ARGS[@]}" -logfile /steamcmd/rust/server-console.txt &
 
 # Wait for log file to be created
 while [ ! -f /steamcmd/rust/server-console.txt ]; do
