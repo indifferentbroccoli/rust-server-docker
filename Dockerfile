@@ -19,7 +19,9 @@ RUN wget -q https://github.com/gorcon/rcon-cli/archive/refs/tags/v${RCON_VERSION
     && go build -v ./cmd/gorcon
 
 #BUILD THE SERVER IMAGE
-FROM cm2network/steamcmd:root
+FROM --platform=linux/amd64 debian:bookworm-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gettext-base \
