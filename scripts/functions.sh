@@ -54,19 +54,15 @@ install() {
   LogAction "Starting Rust server install"
   
   # Install Rust server via SteamCMD
-  LogInfo "Installing Rust Dedicated Server (App ID: 258550)"
-  
-  if ! /home/steam/steamcmd/steamcmd.sh \
-    +force_install_dir /steamcmd/rust \
-    +login anonymous \
-    +app_update 258550 validate \
-    +quit; then
-    LogError "Failed to install Rust server"
-    exit 1
-  fi
-  
-  LogSuccess "Server installation complete"
-}
+  LogInfo "Installing Rust Dedicated Server"
+
+  /depotdownloader/DepotDownloader \
+    -app 258550 \
+    -dir /steamcmd/rust \
+    -validate
+
+  LogSuccess "Server install complete"
+  } 
 
 shutdown_server() {
   LogAction "Shutting down Rust server"
