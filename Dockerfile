@@ -26,8 +26,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     procps \
     jq \
     libarchive-tools \
+    curl \
+    ca-certificates \
+    unzip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Install .NET 8 runtime (required for DepotDownloader)
+RUN curl -sL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
+    chmod +x /tmp/dotnet-install.sh && \
+    /tmp/dotnet-install.sh --channel 8.0 --runtime dotnet --install-dir /usr/share/dotnet && \
+    ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet && \
+    rm /tmp/dotnet-install.sh
+
+# Download DepotDownloader
+ARG DEPOT_DOWNLOADER_VERSION=3.4.0
+RUN curl -sL "https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_${DEPOT_DOWNLOADER_VERSION}/DepotDownloader-linux-x64.zip" -o /tmp/dd.zip && \
+    mkdir -p /depotdownloader && \
+    unzip /tmp/dd.zip -d /depotdownloader && \
+    chmod +x /depotdownloader/DepotDownloader && \
+    rm /tmp/dd.zip
 
 COPY --from=rcon-cli_builder /build/gorcon /usr/bin/rcon-cli
 
