@@ -124,8 +124,16 @@ It is highly recommended you set the following environment values before startin
 | SERVER_LOGOIMAGE                                  |                                                               | HTTP URL to a custom logo image for the server browser                                                                                              |
 | SERVER_URL                                        |                                                               | Website URL for your server                                                                                                                         |
 
+## Custom Startup Arguments
+
+Use `STARTUP_ARGUMENTS` to pass any additional arguments directly to `RustDedicated` at startup. They are appended after all arguments generated from the environment variables above, so they can override or extend any setting.
+
+```env
+STARTUP_ARGUMENTS=+server.tags monthly,vanilla +server.maxplayers 100
+```
+
 > [!NOTE]
-> Additional startup arguments can be configured via RUST_STARTUP_ARGUMENTS environment variable
+> Variables from Didstopia's image using the `RUST_` prefix (e.g. `RUST_SERVER_NAME`) are still supported as a fallback for backward compatibility, but the clean names shown in the table above are preferred.
 
 ## RCON
 

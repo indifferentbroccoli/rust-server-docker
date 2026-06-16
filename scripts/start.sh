@@ -15,7 +15,7 @@ RCON_PASSWORD=$(get_var "RCON_PASSWORD" "admin")
 OXIDE_ENABLED=$(get_var "OXIDE_ENABLED" "false")
 GENERATE_SETTINGS=$(get_var "GENERATE_SETTINGS" "true")
 SAVE_INTERVAL=$(get_var "SAVE_INTERVAL" "600")
-RUST_STARTUP_ARGUMENTS=$(get_var "SERVER_STARTUP_ARGUMENTS" "")
+STARTUP_ARGUMENTS=$(get_var "STARTUP_ARGUMENTS" "")
 SERVER_IDENTITY=$(get_var "SERVER_IDENTITY" "${SERVER_NAME}")
 SERVER_TAGS=$(get_var "SERVER_TAGS" "")
 SERVER_LOGOIMAGE=$(get_var "SERVER_LOGOIMAGE" "")
@@ -40,74 +40,74 @@ EOL
 cd /steamcmd/rust || exit
 
 # Build startup arguments using array
-STARTUP_ARGS=(-batchmode -load -nographics +server.secure "${SERVER_SECURE}")
+ARGS=(-batchmode -load -nographics +server.secure "${SERVER_SECURE}")
 
 if [ "$GENERATE_SETTINGS" = "true" ]; then
   LogAction "Configuring server settings"
 
-  STARTUP_ARGS+=(+server.hostname "${SERVER_NAME}")
-  STARTUP_ARGS+=(+server.description "${SERVER_DESCRIPTION}")
-  STARTUP_ARGS+=(+server.port "${SERVER_PORT}")
-  STARTUP_ARGS+=(+server.queryport "${RCON_PORT}")
-  STARTUP_ARGS+=(+rcon.port "${RCON_PORT}")
-  STARTUP_ARGS+=(+rcon.password "${RCON_PASSWORD}")
-  STARTUP_ARGS+=(+rcon.web 1)
-  STARTUP_ARGS+=(+app.port "${APP_PORT}")
-  STARTUP_ARGS+=(+server.maxplayers "${MAX_PLAYERS}")
-  STARTUP_ARGS+=(+server.worldsize "${WORLD_SIZE}")
-  STARTUP_ARGS+=(+server.seed "${SERVER_SEED}")
-  STARTUP_ARGS+=(+server.identity "${SERVER_IDENTITY}")
-  STARTUP_ARGS+=(+server.saveinterval "${SAVE_INTERVAL:-600}")
-  STARTUP_ARGS+=(+server.encryption "${SERVER_ENCRYPTION}")
+  ARGS+=(+server.hostname "${SERVER_NAME}")
+  ARGS+=(+server.description "${SERVER_DESCRIPTION}")
+  ARGS+=(+server.port "${SERVER_PORT}")
+  ARGS+=(+server.queryport "${RCON_PORT}")
+  ARGS+=(+rcon.port "${RCON_PORT}")
+  ARGS+=(+rcon.password "${RCON_PASSWORD}")
+  ARGS+=(+rcon.web 1)
+  ARGS+=(+app.port "${APP_PORT}")
+  ARGS+=(+server.maxplayers "${MAX_PLAYERS}")
+  ARGS+=(+server.worldsize "${WORLD_SIZE}")
+  ARGS+=(+server.seed "${SERVER_SEED}")
+  ARGS+=(+server.identity "${SERVER_IDENTITY}")
+  ARGS+=(+server.saveinterval "${SAVE_INTERVAL:-600}")
+  ARGS+=(+server.encryption "${SERVER_ENCRYPTION}")
 
   if [ -n "$CUSTOM_MAP_URL" ]; then
-    STARTUP_ARGS+=(+server.levelurl "${CUSTOM_MAP_URL}")
+    ARGS+=(+server.levelurl "${CUSTOM_MAP_URL}")
   else
-    STARTUP_ARGS+=(+server.level "${MAP_TYPE}")
+    ARGS+=(+server.level "${MAP_TYPE}")
   fi
 
   if [ -n "$GAME_MODE" ] && [ "$GAME_MODE" != "standard" ]; then
-    STARTUP_ARGS+=(+server.gamemode "${GAME_MODE}")
+    ARGS+=(+server.gamemode "${GAME_MODE}")
   fi
 
   if [ -n "$MAX_TEAM_SIZE" ]; then
-    STARTUP_ARGS+=(+server.maxteamsize "${MAX_TEAM_SIZE}")
+    ARGS+=(+server.maxteamsize "${MAX_TEAM_SIZE}")
   fi
 
   if [ -n "$SERVER_ERA" ]; then
-    STARTUP_ARGS+=(+server.era "${SERVER_ERA}")
+    ARGS+=(+server.era "${SERVER_ERA}")
   fi
 
   if [ -n "$SERVER_TAGS" ]; then
-    STARTUP_ARGS+=(+server.tags "${SERVER_TAGS}")
+    ARGS+=(+server.tags "${SERVER_TAGS}")
   fi
 
   if [ -n "$SERVER_HEADERIMAGE" ]; then
-    STARTUP_ARGS+=(+server.headerimage "${SERVER_HEADERIMAGE}")
+    ARGS+=(+server.headerimage "${SERVER_HEADERIMAGE}")
   fi
 
   if [ -n "$SERVER_LOGOIMAGE" ]; then
-    STARTUP_ARGS+=(+server.logoimage "${SERVER_LOGOIMAGE}")
+    ARGS+=(+server.logoimage "${SERVER_LOGOIMAGE}")
   fi
 
   if [ -n "$SERVER_URL" ]; then
-    STARTUP_ARGS+=(+server.url "${SERVER_URL}")
+    ARGS+=(+server.url "${SERVER_URL}")
   fi
 
   if [ "$PVP" = "false" ]; then
-    STARTUP_ARGS+=(+server.pve true)
+    ARGS+=(+server.pve true)
   fi
 
   if [ -n "$DECAY_SCALE" ]; then
-    STARTUP_ARGS+=(+decay.scale "${DECAY_SCALE}")
+    ARGS+=(+decay.scale "${DECAY_SCALE}")
   fi
 
   if [ "$STABILITY" = "false" ]; then
-    STARTUP_ARGS+=(+server.stability false)
+    ARGS+=(+server.stability false)
   fi
 
   if [ "$RADIATION" = "false" ]; then
-    STARTUP_ARGS+=(+server.radiation false)
+    ARGS+=(+server.radiation false)
   fi
 
 elif [ "$GENERATE_SETTINGS" = "false" ]; then
@@ -115,9 +115,9 @@ elif [ "$GENERATE_SETTINGS" = "false" ]; then
 fi
 
 # Add custom startup arguments if provided
-if [ -n "$RUST_STARTUP_ARGUMENTS" ]; then
+if [ -n "$STARTUP_ARGUMENTS" ]; then
   LogInfo "Adding custom startup arguments"
-  STARTUP_ARGS+=(${RUST_STARTUP_ARGUMENTS})
+  ARGS+=(${STARTUP_ARGUMENTS})
 fi
 
 LogAction "Starting Rust server"
@@ -134,7 +134,7 @@ LogInfo "Encryption: ${SERVER_ENCRYPTION}"
 # Start the server and tail the log file for docker logs
 cd /steamcmd/rust || exit
 
-./RustDedicated "${STARTUP_ARGS[@]}" -logfile /steamcmd/rust/server-console.txt &
+./RustDedicated "${ARGS[@]}" -logfile /steamcmd/rust/server-console.txt &
 
 # Wait for log file to be created
 while [ ! -f /steamcmd/rust/server-console.txt ]; do
