@@ -17,6 +17,16 @@ GENERATE_SETTINGS=$(get_var "GENERATE_SETTINGS" "true")
 SAVE_INTERVAL=$(get_var "SAVE_INTERVAL" "600")
 RUST_STARTUP_ARGUMENTS=$(get_var "SERVER_STARTUP_ARGUMENTS" "")
 SERVER_IDENTITY=$(get_var "SERVER_IDENTITY" "${SERVER_NAME}")
+SERVER_TAGS=$(get_var "SERVER_TAGS" "")
+SERVER_LOGOIMAGE=$(get_var "SERVER_LOGOIMAGE" "")
+MAP_TYPE=$(get_var "MAP_TYPE" "Procedural Map")
+CUSTOM_MAP_URL=$(get_var "CUSTOM_MAP_URL" "")
+GAME_MODE=$(get_var "GAME_MODE" "standard")
+MAX_TEAM_SIZE=$(get_var "MAX_TEAM_SIZE" "")
+SERVER_ERA=$(get_var "SERVER_ERA" "")
+EAC_ENABLED=$(get_var "EAC_ENABLED" "true")
+SERVER_SECURE=$(get_var "SERVER_SECURE" "1")
+SERVER_ENCRYPTION=$(get_var "SERVER_ENCRYPTION" "2")
 
 # Configure RCON settings
 LogAction "Configuring RCON settings"
@@ -30,11 +40,11 @@ EOL
 cd /steamcmd/rust || exit
 
 # Build startup arguments using array
-STARTUP_ARGS=(-batchmode -load -nographics +server.secure 1)
+STARTUP_ARGS=(-batchmode -load -nographics +server.secure "${SERVER_SECURE}")
 
 if [ "$GENERATE_SETTINGS" = "true" ]; then
   LogAction "Configuring server settings"
-  
+
   STARTUP_ARGS+=(+server.hostname "${SERVER_NAME}")
   STARTUP_ARGS+=(+server.description "${SERVER_DESCRIPTION}")
   STARTUP_ARGS+=(+server.port "${SERVER_PORT}")
@@ -48,32 +58,58 @@ if [ "$GENERATE_SETTINGS" = "true" ]; then
   STARTUP_ARGS+=(+server.seed "${SERVER_SEED}")
   STARTUP_ARGS+=(+server.identity "${SERVER_IDENTITY}")
   STARTUP_ARGS+=(+server.saveinterval "${SAVE_INTERVAL:-600}")
-  
-  # Update checking
+  STARTUP_ARGS+=(+server.encryption "${SERVER_ENCRYPTION}")
+
+  if [ -n "$CUSTOM_MAP_URL" ]; then
+    STARTUP_ARGS+=(+server.levelurl "${CUSTOM_MAP_URL}")
+  else
+    STARTUP_ARGS+=(+server.level "${MAP_TYPE}")
+  fi
+
+  if [ -n "$GAME_MODE" ] && [ "$GAME_MODE" != "standard" ]; then
+    STARTUP_ARGS+=(+server.gamemode "${GAME_MODE}")
+  fi
+
+  if [ -n "$MAX_TEAM_SIZE" ]; then
+    STARTUP_ARGS+=(+server.maxteamsize "${MAX_TEAM_SIZE}")
+  fi
+
+  if [ -n "$SERVER_ERA" ]; then
+    STARTUP_ARGS+=(+server.era "${SERVER_ERA}")
+  fi
+
+  if [ -n "$SERVER_TAGS" ]; then
+    STARTUP_ARGS+=(+server.tags "${SERVER_TAGS}")
+  fi
+
   if [ -n "$SERVER_HEADERIMAGE" ]; then
     STARTUP_ARGS+=(+server.headerimage "${SERVER_HEADERIMAGE}")
   fi
-  
+
+  if [ -n "$SERVER_LOGOIMAGE" ]; then
+    STARTUP_ARGS+=(+server.logoimage "${SERVER_LOGOIMAGE}")
+  fi
+
   if [ -n "$SERVER_URL" ]; then
     STARTUP_ARGS+=(+server.url "${SERVER_URL}")
   fi
-  
+
   if [ "$PVP" = "false" ]; then
     STARTUP_ARGS+=(+server.pve true)
   fi
-  
+
   if [ -n "$DECAY_SCALE" ]; then
     STARTUP_ARGS+=(+decay.scale "${DECAY_SCALE}")
   fi
-  
+
   if [ "$STABILITY" = "false" ]; then
     STARTUP_ARGS+=(+server.stability false)
   fi
-  
+
   if [ "$RADIATION" = "false" ]; then
     STARTUP_ARGS+=(+server.radiation false)
   fi
-  
+
 elif [ "$GENERATE_SETTINGS" = "false" ]; then
   LogWarn "GENERATE_SETTINGS=false, using existing server configuration"
 fi
@@ -90,6 +126,10 @@ LogInfo "Port: ${SERVER_PORT}"
 LogInfo "RCON Port: ${RCON_PORT}"
 LogInfo "App Port: ${APP_PORT}"
 LogInfo "Max Players: ${MAX_PLAYERS}"
+LogInfo "Map Type: ${MAP_TYPE}"
+LogInfo "Game Mode: ${GAME_MODE}"
+LogInfo "Server Secure: ${SERVER_SECURE}"
+LogInfo "Encryption: ${SERVER_ENCRYPTION}"
 
 # Start the server and tail the log file for docker logs
 cd /steamcmd/rust || exit
