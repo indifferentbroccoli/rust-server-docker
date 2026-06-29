@@ -73,9 +73,9 @@ COPY ./scripts /home/steam/server/
 COPY branding /branding
 
 RUN mkdir -p /steamcmd/rust && \
-    chmod +x /home/steam/server/*.sh && \
+    (ls /home/steam/server/*.sh >/dev/null 2>&1 && chmod +x /home/steam/server/*.sh || true) && \
     chmod +x /home/steam/server/rcon && \
-    ln -s /home/steam/server/rcon /usr/bin/rcon && \
+    ln -sf /home/steam/server/rcon /usr/bin/rcon && \
     chown -R steam:steam /steamcmd/rust
 WORKDIR /home/steam/server
 
