@@ -74,9 +74,8 @@ COPY branding /branding
 
 RUN mkdir -p /steamcmd/rust && \
     (ls /home/steam/server/*.sh >/dev/null 2>&1 && chmod +x /home/steam/server/*.sh || true) && \
-    chmod +x /home/steam/server/rcon && \
-    ln -sf /home/steam/server/rcon /usr/bin/rcon && \
-    chown -R steam:steam /steamcmd/rust
+    ln -sf /usr/bin/rcon-cli /usr/bin/rcon && \
+    chown -R root:root /steamcmd/rust
 WORKDIR /home/steam/server
 
 HEALTHCHECK --start-period=5m \
