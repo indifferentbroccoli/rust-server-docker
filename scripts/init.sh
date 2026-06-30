@@ -23,7 +23,7 @@ else
 fi
 
 mkdir -p /home/steam/.steam/sdk64
-ln -sf /steamcmd/rust/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
+ln -sf /steamcmd/rust/steamclient.so /home/steam/.steam/sdk64/steamclient.so
 
 # Install Oxide if enabled
 install_oxide
