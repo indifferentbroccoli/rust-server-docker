@@ -66,6 +66,8 @@ install() {
 
   /depotdownloader/DepotDownloader "${DD_ARGS[@]}"
 
+  chmod +x /steamcmd/rust/RustDedicated
+
   LogSuccess "Server install complete"
   }
 
