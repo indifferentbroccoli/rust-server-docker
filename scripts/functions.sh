@@ -52,17 +52,22 @@ Log() {
 
 install() {
   LogAction "Starting Rust server install"
-  
-  # Install Rust server via SteamCMD
+
   LogInfo "Installing Rust Dedicated Server"
 
-  /depotdownloader/DepotDownloader \
-    -app 258550 \
-    -dir /steamcmd/rust \
-    -validate
+  BRANCH=$(get_var "BRANCH" "")
+
+  DD_ARGS=(-app 258550 -dir /steamcmd/rust -validate)
+
+  if [ -n "$BRANCH" ] && [ "$BRANCH" != "public" ]; then
+    LogInfo "Using beta branch: ${BRANCH}"
+    DD_ARGS+=(-beta "${BRANCH}")
+  fi
+
+  /depotdownloader/DepotDownloader "${DD_ARGS[@]}"
 
   LogSuccess "Server install complete"
-  } 
+  }
 
 shutdown_server() {
   LogAction "Shutting down Rust server"

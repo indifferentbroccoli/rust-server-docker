@@ -66,7 +66,8 @@ ENV HOME=/home/steam \
     WORLD_SIZE=3500 \
     MAX_PLAYERS=50 \
     GENERATE_SETTINGS=true \
-    OXIDE_ENABLED=false
+    OXIDE_ENABLED=false \
+    BRANCH=""
 
 COPY ./scripts /home/steam/server/
 
