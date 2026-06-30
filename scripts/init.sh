@@ -22,6 +22,9 @@ else
     LogWarn "UPDATE_ON_START is set to false/0, skipping server update from Steam"
 fi
 
+mkdir -p /home/steam/.steam/sdk64
+ln -sf /steamcmd/rust/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
+
 # Install Oxide if enabled
 install_oxide
 
